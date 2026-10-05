@@ -1,6 +1,39 @@
 "use client";
 
+import { useState } from "react";
+
+import JoinForm from "@/components/JoinForm";
 import { usePartyByJoinCode } from "@/hooks/useParty";
+import { loadGuest, saveGuest, type SavedGuest } from "@/lib/storage";
+import type { Party } from "@/types/api";
+
+// Rendered only after the party has loaded, so reading localStorage is safe.
+function GuestSection({ party }: { party: Party }) {
+  const [guest, setGuest] = useState<SavedGuest | null>(() =>
+    loadGuest(party.id),
+  );
+
+  function handleJoined(newGuest: SavedGuest) {
+    saveGuest(party.id, newGuest);
+    setGuest(newGuest);
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-3xl font-semibold tracking-tight">{party.name}</h1>
+        <p className="text-stone-600">
+          You have been invited to order together.
+        </p>
+      </div>
+      {guest ? (
+        <p>Welcome, {guest.name}!</p>
+      ) : (
+        <JoinForm partyId={party.id} onJoined={handleJoined} />
+      )}
+    </div>
+  );
+}
 
 export default function JoinView({ joinCode }: { joinCode: string }) {
   const {
@@ -30,10 +63,5 @@ export default function JoinView({ joinCode }: { joinCode: string }) {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-3xl font-semibold tracking-tight">{party.name}</h1>
-      <p className="text-stone-600">You have been invited to order together.</p>
-    </div>
-  );
+  return <GuestSection party={party} />;
 }

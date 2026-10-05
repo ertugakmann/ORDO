@@ -31,3 +31,10 @@ export type MenuItemInput = {
   price: number;
   category: string;
 };
+
+export type Participant = {
+  id: number;
+  party_id: number;
+  name: string;
+  created_at: string;
+};
