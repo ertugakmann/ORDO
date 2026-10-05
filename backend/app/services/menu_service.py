@@ -1,7 +1,7 @@
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.models import MenuItem
+from app.models import MenuItem, Party
 from app.parsers.menu_parser import ParsedItem
 from app.schemas.menu import MenuCategory, MenuItemInput, MenuRead
 
@@ -59,3 +59,10 @@ def replace_menu(db: Session, party_id: int, parsed_items: list[ParsedItem]):
             )
         )
     db.commit()
+
+
+def confirm_menu(db: Session, party: Party) -> Party:
+    party.menu_confirmed = True
+    db.commit()
+    db.refresh(party)
+    return party

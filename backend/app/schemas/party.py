@@ -18,4 +18,5 @@ class PartyRead(BaseModel):
     id: int
     name: str
     join_code: str
+    menu_confirmed: bool
     created_at: datetime

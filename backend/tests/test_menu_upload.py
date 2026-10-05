@@ -81,3 +81,34 @@ def test_pdf_without_menu_items(client, party):
 def test_upload_for_unknown_party(client):
     response = upload(client, {"id": 999}, make_pdf("Hummus 6.50"))
     assert response.status_code == 404
+
+
+def test_confirm_menu(client, party):
+    assert party["menu_confirmed"] is False
+    upload(client, party, make_pdf("Hummus 6.50"))
+
+    response = client.post(f"/api/v1/parties/{party['id']}/menu/confirm")
+    assert response.status_code == 200
+    assert response.json()["menu_confirmed"] is True
+
+    by_code = client.get(f"/api/v1/parties/join/{party['join_code']}").json()
+    assert by_code["menu_confirmed"] is True
+
+
+def test_cannot_confirm_empty_menu(client, party):
+    response = client.post(f"/api/v1/parties/{party['id']}/menu/confirm")
+    assert response.status_code == 422
+    assert (
+        client.get(f"/api/v1/parties/{party['id']}").json()["menu_confirmed"] is False
+    )
+
+
+def test_confirm_unknown_party(client):
+    assert client.post("/api/v1/parties/999/menu/confirm").status_code == 404
+
+
+def test_cannot_upload_after_confirming(client, party):
+    upload(client, party, make_pdf("Hummus 6.50"))
+    client.post(f"/api/v1/parties/{party['id']}/menu/confirm")
+    response = upload(client, party, make_pdf("Falafel 5.00"))
+    assert response.status_code == 409

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.parsers.menu_parser import MenuParseError, parse_menu_pdf
 from app.schemas.menu import MenuItemInput, MenuItemRead, MenuRead
+from app.schemas.party import PartyRead
 from app.services import menu_service, party_service
 
 router = APIRouter(tags=["menu"])
@@ -16,8 +17,10 @@ MAX_PDF_SIZE = 5 * 1024 * 1024  # 5 MB
 
 
 def require_party(db: Session, party_id: int):
-    if party_service.get_party(db, party_id) is None:
+    party = party_service.get_party(db, party_id)
+    if party is None:
         raise HTTPException(status_code=404, detail="Party not found")
+    return party
 
 
 def require_menu_item(db: Session, menu_item_id: int):
@@ -56,7 +59,9 @@ def delete_menu_item(menu_item_id: int, db: DbSession):
 
 @router.post("/parties/{party_id}/menu/upload", response_model=MenuRead)
 async def upload_menu(party_id: int, file: UploadFile, db: DbSession):
-    require_party(db, party_id)
+    party = require_party(db, party_id)
+    if party.menu_confirmed:
+        raise HTTPException(status_code=409, detail="Menu is already confirmed")
 
     if not (file.filename or "").lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Please upload a PDF file")
@@ -77,3 +82,13 @@ async def upload_menu(party_id: int, file: UploadFile, db: DbSession):
 
     menu_service.replace_menu(db, party_id, parsed_items)
     return menu_service.get_menu(db, party_id)
+
+
+@router.post("/parties/{party_id}/menu/confirm", response_model=PartyRead)
+def confirm_menu(party_id: int, db: DbSession):
+    party = require_party(db, party_id)
+    if not menu_service.get_menu(db, party_id).categories:
+        raise HTTPException(
+            status_code=422, detail="Add at least one menu item before confirming"
+        )
+    return menu_service.confirm_menu(db, party)
