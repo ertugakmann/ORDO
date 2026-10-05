@@ -108,14 +108,42 @@ def test_empty_order_is_rejected(client, setup):
 
 def test_item_from_another_party_is_rejected(client, setup):
     other = client.post("/api/v1/parties", json={"name": "Other"}).json()
+    client.post(
+        f"/api/v1/parties/{other['id']}/menu/upload",
+        files={"file": ("menu.pdf", make_pdf("Falafel 5.00"), "application/pdf")},
+    )
+    client.post(f"/api/v1/parties/{other['id']}/menu/confirm")
+    guest = client.post(
+        f"/api/v1/parties/{other['id']}/participants", json={"name": "Ayse"}
+    ).json()
+
+    response = client.post(
+        f"/api/v1/parties/{other['id']}/orders",
+        json={
+            "participant_id": guest["id"],
+            "items": [{"menu_item_id": setup["items"]["Hummus"]["id"], "quantity": 1}],
+        },
+    )
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Some items are not on this menu"}
+
+
+def test_participant_from_another_party_is_rejected(client, setup):
+    other = client.post("/api/v1/parties", json={"name": "Other"}).json()
+    client.post(
+        f"/api/v1/parties/{other['id']}/menu/upload",
+        files={"file": ("menu.pdf", make_pdf("Falafel 5.00"), "application/pdf")},
+    )
+    client.post(f"/api/v1/parties/{other['id']}/menu/confirm")
     response = client.post(
         f"/api/v1/parties/{other['id']}/orders",
         json={
             "participant_id": setup["participant"]["id"],
-            "items": [{"menu_item_id": setup["items"]["Hummus"]["id"], "quantity": 1}],
+            "items": [{"menu_item_id": 1, "quantity": 1}],
         },
     )
-    assert response.status_code == 404  # the participant is in another party
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Participant not found"}
 
 
 def test_unknown_participant_and_ids(client, setup):
