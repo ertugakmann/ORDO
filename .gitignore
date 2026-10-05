@@ -32,3 +32,8 @@ htmlcov/
 .idea/
 .vscode/
 *.swp
+
+# Private local agent documentation
+CLAUDE.md
+PRODUCT.md
+TASKS.md
