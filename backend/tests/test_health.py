@@ -9,3 +9,13 @@ def test_health_check():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "service": "ordo-api"}
+
+
+def test_cors_allows_frontend_origin():
+    response = client.get("/health", headers={"Origin": "http://localhost:3000"})
+    assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+
+
+def test_cors_blocks_other_origin():
+    response = client.get("/health", headers={"Origin": "http://evil.example"})
+    assert "access-control-allow-origin" not in response.headers
