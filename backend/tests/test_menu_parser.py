@@ -86,3 +86,15 @@ def test_pdf_without_text():
     document.new_page()
     with pytest.raises(MenuParseError, match="no readable text"):
         parse_menu_pdf(document.tobytes())
+
+
+def test_price_without_any_name_is_ignored():
+    assert parse_menu_text("6.50\n") == []
+
+
+def test_pdf_with_too_many_pages():
+    document = pymupdf.open()
+    for _ in range(21):
+        document.new_page().insert_text((50, 72), "Hummus 6.50")
+    with pytest.raises(MenuParseError, match="too many pages"):
+        parse_menu_pdf(document.tobytes())

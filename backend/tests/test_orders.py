@@ -162,3 +162,31 @@ def test_cannot_delete_ordered_menu_item(client, setup):
     create_order(client, setup, [("Hummus", 1)])
     response = client.delete(f"/api/v1/menu-items/{setup['items']['Hummus']['id']}")
     assert response.status_code == 409
+
+
+def test_cannot_order_before_menu_is_confirmed(client):
+    from app.db.session import SessionLocal
+    from app.models import Participant
+
+    party = client.post("/api/v1/parties", json={"name": "Early"}).json()
+    # Guests cannot join yet through the API, so add one directly.
+    with SessionLocal() as db:
+        guest = Participant(party_id=party["id"], name="Ahmet")
+        db.add(guest)
+        db.commit()
+        guest_id = guest.id
+
+    response = client.post(
+        f"/api/v1/parties/{party['id']}/orders",
+        json={
+            "participant_id": guest_id,
+            "items": [{"menu_item_id": 1, "quantity": 1}],
+        },
+    )
+    assert response.status_code == 409
+
+
+def test_added_up_quantity_cannot_exceed_99(client, setup):
+    response = create_order(client, setup, [("Hummus", 60), ("Hummus", 60)])
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Quantity is too large"}

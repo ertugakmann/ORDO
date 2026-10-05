@@ -46,3 +46,15 @@ def test_invalid_join_code(client):
     response = client.get("/api/v1/parties/join/NOPE00")
     assert response.status_code == 404
     assert response.json() == {"detail": "Invalid join code"}
+
+
+def test_join_code_clash_is_retried(client, monkeypatch):
+    from app.services import party_service
+
+    codes = iter(["AAAAAA", "AAAAAA", "BBBBBB"])
+    monkeypatch.setattr(party_service, "make_join_code", lambda: next(codes))
+
+    first = client.post("/api/v1/parties", json={"name": "One"}).json()
+    second = client.post("/api/v1/parties", json={"name": "Two"}).json()
+    assert first["join_code"] == "AAAAAA"
+    assert second["join_code"] == "BBBBBB"
