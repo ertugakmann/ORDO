@@ -1,4 +1,6 @@
 from fastapi import APIRouter
 
-# Version 1 routes (parties, menu, participants, orders) are added here.
+from app.api.v1 import parties
+
 api_router = APIRouter(prefix="/api/v1")
+api_router.include_router(parties.router)

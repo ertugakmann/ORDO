@@ -1,4 +1,5 @@
 import ApiStatus from "@/components/ApiStatus";
+import CreatePartyForm from "@/components/CreatePartyForm";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
         Create a dining party, share the menu with your group, and get one clear
         order for the restaurant.
       </p>
+      <CreatePartyForm />
       <ApiStatus />
     </div>
   );
