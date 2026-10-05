@@ -1,6 +1,6 @@
 # ORDO
 
-ORDO is a group dining and ordering platform: a FastAPI backend and a Next.js frontend. The project is in early development; so far a leader can create a party, upload a menu PDF, review and edit the parsed menu, and confirm it to get a share link.
+ORDO is a group dining and ordering platform: a FastAPI backend and a Next.js frontend. The project is in early development; a leader creates a party, uploads a menu PDF, reviews and confirms the parsed menu and shares a link. Guests join with a name, choose their food and submit. The leader sees every order, the totals and one consolidated order for the restaurant.
 
 ## Prerequisites
 - Python 3.12+ (developed on 3.14)

@@ -56,3 +56,32 @@ export type Order = {
   items: OrderLine[];
   total: string;
 };
+
+export type DashboardParticipant = {
+  id: number;
+  name: string;
+  status: "submitted" | "not_submitted";
+  items: OrderLine[];
+  total: string;
+};
+
+export type Dashboard = {
+  party_id: number;
+  party_name: string;
+  participants: DashboardParticipant[];
+  group_total: string;
+};
+
+export type ConsolidatedItem = {
+  menu_item_id: number;
+  name: string;
+  category: string;
+  quantity: number;
+  total: string;
+};
+
+export type ConsolidatedOrder = {
+  items: ConsolidatedItem[];
+  total_quantity: number;
+  total: string;
+};

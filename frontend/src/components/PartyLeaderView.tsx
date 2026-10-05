@@ -1,5 +1,7 @@
 "use client";
 
+import ConsolidatedOrder from "@/components/ConsolidatedOrder";
+import LeaderDashboard from "@/components/LeaderDashboard";
 import MenuEditor from "@/components/MenuEditor";
 import MenuUpload from "@/components/MenuUpload";
 import ShareLink from "@/components/ShareLink";
@@ -18,6 +20,19 @@ function MenuSection({ party }: { party: Party }) {
 
       {!party.menu_confirmed && (
         <MenuUpload partyId={party.id} hasMenu={hasMenu} />
+      )}
+
+      {party.menu_confirmed && (
+        <>
+          <section>
+            <h2 className="pb-3 text-xl font-semibold">Orders</h2>
+            <LeaderDashboard partyId={party.id} />
+          </section>
+          <section>
+            <h2 className="pb-3 text-xl font-semibold">Restaurant order</h2>
+            <ConsolidatedOrder partyId={party.id} />
+          </section>
+        </>
       )}
 
       <div>
