@@ -53,6 +53,11 @@ def update_menu_item(menu_item_id: int, data: MenuItemInput, db: DbSession):
 @router.delete("/menu-items/{menu_item_id}", status_code=204)
 def delete_menu_item(menu_item_id: int, db: DbSession):
     item = require_menu_item(db, menu_item_id)
+    if menu_service.is_ordered(db, item):
+        raise HTTPException(
+            status_code=409,
+            detail="This item is part of an order and cannot be deleted",
+        )
     menu_service.delete_menu_item(db, item)
     return Response(status_code=204)
 

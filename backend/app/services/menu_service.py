@@ -1,7 +1,7 @@
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.models import MenuItem, Party
+from app.models import MenuItem, OrderItem, Party
 from app.parsers.menu_parser import ParsedItem
 from app.schemas.menu import MenuCategory, MenuItemInput, MenuRead
 
@@ -66,3 +66,12 @@ def confirm_menu(db: Session, party: Party) -> Party:
     db.commit()
     db.refresh(party)
     return party
+
+
+def is_ordered(db: Session, item: MenuItem) -> bool:
+    return (
+        db.scalar(
+            select(OrderItem.id).where(OrderItem.menu_item_id == item.id).limit(1)
+        )
+        is not None
+    )

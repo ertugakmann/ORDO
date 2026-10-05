@@ -67,7 +67,9 @@ class Order(Base):
 
     party: Mapped["Party"] = relationship(back_populates="orders")
     participant: Mapped["Participant"] = relationship(back_populates="orders")
-    items: Mapped[list["OrderItem"]] = relationship(back_populates="order")
+    items: Mapped[list["OrderItem"]] = relationship(
+        back_populates="order", cascade="all, delete-orphan"
+    )
 
 
 class OrderItem(Base):
