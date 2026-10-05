@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import GuestOrder from "@/components/GuestOrder";
 import JoinForm from "@/components/JoinForm";
 import { usePartyByJoinCode } from "@/hooks/useParty";
 import { loadGuest, saveGuest, type SavedGuest } from "@/lib/storage";
@@ -27,7 +28,7 @@ function GuestSection({ party }: { party: Party }) {
         </p>
       </div>
       {guest ? (
-        <p>Welcome, {guest.name}!</p>
+        <GuestOrder partyId={party.id} guest={guest} />
       ) : (
         <JoinForm partyId={party.id} onJoined={handleJoined} />
       )}

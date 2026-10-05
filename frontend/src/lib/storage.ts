@@ -20,3 +20,18 @@ export function saveGuest(partyId: number, guest: SavedGuest) {
     window.localStorage.setItem(key(partyId), JSON.stringify(guest));
   } catch {}
 }
+
+export function loadOrderId(partyId: number): number | null {
+  try {
+    const saved = window.localStorage.getItem(`ordo-order-${partyId}`);
+    return saved ? Number(saved) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveOrderId(partyId: number, orderId: number) {
+  try {
+    window.localStorage.setItem(`ordo-order-${partyId}`, String(orderId));
+  } catch {}
+}

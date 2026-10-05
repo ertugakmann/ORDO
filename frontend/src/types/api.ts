@@ -38,3 +38,21 @@ export type Participant = {
   name: string;
   created_at: string;
 };
+
+export type OrderLine = {
+  menu_item_id: number;
+  name: string;
+  quantity: number;
+  price_snapshot: string;
+  line_total: string;
+};
+
+export type Order = {
+  id: number;
+  party_id: number;
+  participant_id: number;
+  status: "draft" | "submitted";
+  created_at: string;
+  items: OrderLine[];
+  total: string;
+};
