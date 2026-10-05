@@ -8,7 +8,11 @@ client = TestClient(app)
 def test_health_check():
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "service": "ordo-api"}
+    assert response.json() == {
+        "status": "ok",
+        "service": "ordo-api",
+        "database": "ok",
+    }
 
 
 def test_cors_allows_frontend_origin():
