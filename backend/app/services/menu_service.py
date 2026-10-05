@@ -1,7 +1,8 @@
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.models import MenuItem
+from app.parsers.menu_parser import ParsedItem
 from app.schemas.menu import MenuCategory, MenuItemInput, MenuRead
 
 
@@ -41,4 +42,20 @@ def update_menu_item(db: Session, item: MenuItem, data: MenuItemInput) -> MenuIt
 
 def delete_menu_item(db: Session, item: MenuItem):
     db.delete(item)
+    db.commit()
+
+
+def replace_menu(db: Session, party_id: int, parsed_items: list[ParsedItem]):
+    """Replace all of a party's menu items with freshly parsed ones."""
+    db.execute(delete(MenuItem).where(MenuItem.party_id == party_id))
+    for parsed in parsed_items:
+        db.add(
+            MenuItem(
+                party_id=party_id,
+                name=parsed.name,
+                description=parsed.description,
+                price=parsed.price,
+                category=parsed.category,
+            )
+        )
     db.commit()
