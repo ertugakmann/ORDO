@@ -55,7 +55,6 @@ export default function MenuItemForm({
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -69,9 +68,6 @@ export default function MenuItemForm({
       price: Number(values.price),
       category: values.category,
     });
-    if (!onCancel) {
-      reset(emptyValues);
-    }
   }
 
   const inputClass = "rounded border border-stone-300 bg-white px-2 py-1";
@@ -88,7 +84,9 @@ export default function MenuItemForm({
         {...register("name")}
       />
       {errors.name && (
-        <p className="text-sm text-red-700">{errors.name.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.name.message}
+        </p>
       )}
 
       <input
@@ -98,7 +96,9 @@ export default function MenuItemForm({
         {...register("description")}
       />
       {errors.description && (
-        <p className="text-sm text-red-700">{errors.description.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.description.message}
+        </p>
       )}
 
       <div className="flex gap-2">
@@ -110,7 +110,7 @@ export default function MenuItemForm({
           {...register("price")}
         />
         <input
-          placeholder="Category (type a new one to create it)"
+          placeholder="Category"
           aria-label="Category"
           list="category-options"
           className={`${inputClass} flex-1`}
@@ -122,14 +122,25 @@ export default function MenuItemForm({
           ))}
         </datalist>
       </div>
+      <p className="text-xs text-stone-500">
+        To create a new category, type its name in the Category field.
+      </p>
       {errors.price && (
-        <p className="text-sm text-red-700">{errors.price.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.price.message}
+        </p>
       )}
       {errors.category && (
-        <p className="text-sm text-red-700">{errors.category.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.category.message}
+        </p>
       )}
 
-      {errorMessage && <p className="text-sm text-red-700">{errorMessage}</p>}
+      {errorMessage && (
+        <p role="alert" className="text-sm text-red-700">
+          {errorMessage}
+        </p>
+      )}
 
       <div className="flex gap-2">
         <button

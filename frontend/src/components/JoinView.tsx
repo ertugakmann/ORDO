@@ -5,7 +5,12 @@ import { useState } from "react";
 import GuestOrder from "@/components/GuestOrder";
 import JoinForm from "@/components/JoinForm";
 import { usePartyByJoinCode } from "@/hooks/useParty";
-import { loadGuest, saveGuest, type SavedGuest } from "@/lib/storage";
+import {
+  clearGuest,
+  loadGuest,
+  saveGuest,
+  type SavedGuest,
+} from "@/lib/storage";
 import type { Party } from "@/types/api";
 
 // Rendered only after the party has loaded, so reading localStorage is safe.
@@ -19,6 +24,11 @@ function GuestSection({ party }: { party: Party }) {
     setGuest(newGuest);
   }
 
+  function handleReset() {
+    clearGuest(party.id);
+    setGuest(null);
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -28,7 +38,15 @@ function GuestSection({ party }: { party: Party }) {
         </p>
       </div>
       {guest ? (
-        <GuestOrder partyId={party.id} guest={guest} />
+        <>
+          <GuestOrder partyId={party.id} guest={guest} />
+          <button
+            onClick={handleReset}
+            className="self-start text-sm text-stone-600 underline"
+          >
+            Not {guest.name}? Join with a different name
+          </button>
+        </>
       ) : (
         <JoinForm partyId={party.id} onJoined={handleJoined} />
       )}
@@ -49,7 +67,11 @@ export default function JoinView({ joinCode }: { joinCode: string }) {
   }
 
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
 
   if (!party.menu_confirmed) {

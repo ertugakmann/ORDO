@@ -50,10 +50,14 @@ export default function JoinForm({
         {...register("name")}
       />
       {errors.name && (
-        <p className="text-sm text-red-700">{errors.name.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.name.message}
+        </p>
       )}
       {joinParty.isError && (
-        <p className="text-sm text-red-700">{joinParty.error.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {joinParty.error.message}
+        </p>
       )}
       <button
         type="submit"

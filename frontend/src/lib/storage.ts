@@ -35,3 +35,10 @@ export function saveOrderId(partyId: number, orderId: number) {
     window.localStorage.setItem(`ordo-order-${partyId}`, String(orderId));
   } catch {}
 }
+
+export function clearGuest(partyId: number) {
+  try {
+    window.localStorage.removeItem(key(partyId));
+    window.localStorage.removeItem(`ordo-order-${partyId}`);
+  } catch {}
+}

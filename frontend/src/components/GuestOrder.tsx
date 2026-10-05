@@ -59,7 +59,11 @@ function OrderForm({
     return <p className="text-stone-500">Loading menu...</p>;
   }
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
   if (menu.categories.length === 0) {
     return <p className="text-stone-500">No menu items found.</p>;
@@ -162,7 +166,7 @@ function OrderForm({
           Total: {formatPrice(total)}
         </p>
         {submitOrder.isError && (
-          <p className="pb-2 text-sm text-red-700">
+          <p role="alert" className="pb-2 text-sm text-red-700">
             {submitOrder.error.message}
           </p>
         )}

@@ -14,6 +14,8 @@ import type { MenuItem } from "@/types/api";
 export default function MenuEditor({ partyId }: { partyId: number }) {
   const { data: menu, isPending, isError, error } = useMenu(partyId);
   const [editingId, setEditingId] = useState<number | null>(null);
+  // Changing the key gives us an empty "add" form after an item is added.
+  const [addFormKey, setAddFormKey] = useState(0);
   const addItem = useAddMenuItem(partyId);
   const updateItem = useUpdateMenuItem(partyId);
   const deleteItem = useDeleteMenuItem(partyId);
@@ -22,7 +24,11 @@ export default function MenuEditor({ partyId }: { partyId: number }) {
     return <p className="text-stone-500">Loading menu...</p>;
   }
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
 
   const categories = menu.categories.map((category) => category.name);
@@ -57,7 +63,10 @@ export default function MenuEditor({ partyId }: { partyId: number }) {
     }
 
     return (
-      <li key={item.id} className="flex items-start justify-between gap-4 py-2">
+      <li
+        key={item.id}
+        className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 py-2"
+      >
         <div>
           <p className="font-medium">{item.name}</p>
           {item.description && (
@@ -66,11 +75,16 @@ export default function MenuEditor({ partyId }: { partyId: number }) {
         </div>
         <div className="flex shrink-0 items-center gap-3 text-sm">
           <span>£{item.price}</span>
-          <button onClick={() => setEditingId(item.id)} className="underline">
+          <button
+            onClick={() => setEditingId(item.id)}
+            aria-label={`Edit ${item.name}`}
+            className="underline"
+          >
             Edit
           </button>
           <button
             onClick={() => deleteItem.mutate(item.id)}
+            aria-label={`Delete ${item.name}`}
             disabled={deleteItem.isPending}
             className="text-red-700 underline"
           >
@@ -87,7 +101,9 @@ export default function MenuEditor({ partyId }: { partyId: number }) {
         <p className="text-stone-500">No menu items found. Add one below.</p>
       )}
       {deleteItem.isError && (
-        <p className="text-sm text-red-700">{deleteItem.error.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {deleteItem.error.message}
+        </p>
       )}
 
       {menu.categories.map((category) => (
@@ -104,11 +120,16 @@ export default function MenuEditor({ partyId }: { partyId: number }) {
       <section>
         <h3 className="pb-2 text-lg font-semibold">Add an item</h3>
         <MenuItemForm
+          key={addFormKey}
           categories={categories}
           submitLabel="Add item"
           isSaving={addItem.isPending}
           errorMessage={addItem.isError ? addItem.error.message : undefined}
-          onSubmit={(values) => addItem.mutate(values)}
+          onSubmit={(values) =>
+            addItem.mutate(values, {
+              onSuccess: () => setAddFormKey(addFormKey + 1),
+            })
+          }
         />
       </section>
     </div>

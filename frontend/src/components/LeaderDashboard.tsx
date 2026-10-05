@@ -10,7 +10,11 @@ export default function LeaderDashboard({ partyId }: { partyId: number }) {
     return <p className="text-stone-500">Loading orders...</p>;
   }
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
 
   const submittedCount = data.participants.filter(

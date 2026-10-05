@@ -13,7 +13,11 @@ export default function ConsolidatedOrder({ partyId }: { partyId: number }) {
     return <p className="text-stone-500">Loading restaurant order...</p>;
   }
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
   if (data.items.length === 0) {
     return (

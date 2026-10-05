@@ -50,7 +50,9 @@ function MenuSection({ party }: { party: Party }) {
       {!party.menu_confirmed && (
         <div className="flex flex-col gap-2">
           {confirmMenu.isError && (
-            <p className="text-sm text-red-700">{confirmMenu.error.message}</p>
+            <p role="alert" className="text-sm text-red-700">
+              {confirmMenu.error.message}
+            </p>
           )}
           <button
             onClick={() => confirmMenu.mutate()}
@@ -78,7 +80,11 @@ export default function PartyLeaderView({ joinCode }: { joinCode: string }) {
   }
 
   if (isError) {
-    return <p className="text-red-700">{error.message}</p>;
+    return (
+      <p role="alert" className="text-red-700">
+        {error.message}
+      </p>
+    );
   }
 
   return (

@@ -15,6 +15,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
       const body = await response.json();
       if (typeof body.detail === "string") {
         message = body.detail;
+      } else if (Array.isArray(body.detail) && body.detail[0]?.msg) {
+        // Validation errors from FastAPI come as a list.
+        message = body.detail[0].msg;
       }
     } catch {}
     throw new Error(message);

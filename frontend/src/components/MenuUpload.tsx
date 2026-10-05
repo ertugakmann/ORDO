@@ -39,7 +39,9 @@ export default function MenuUpload({
         <p className="text-sm text-stone-500">Uploading and parsing menu...</p>
       )}
       {upload.isError && (
-        <p className="text-sm text-red-700">{upload.error.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {upload.error.message}
+        </p>
       )}
       {hasMenu && (
         <p className="text-sm text-stone-500">

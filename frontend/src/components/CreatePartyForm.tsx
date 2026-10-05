@@ -44,10 +44,14 @@ export default function CreatePartyForm() {
         {...register("name")}
       />
       {errors.name && (
-        <p className="text-sm text-red-700">{errors.name.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {errors.name.message}
+        </p>
       )}
       {createParty.isError && (
-        <p className="text-sm text-red-700">{createParty.error.message}</p>
+        <p role="alert" className="text-sm text-red-700">
+          {createParty.error.message}
+        </p>
       )}
       <button
         type="submit"
