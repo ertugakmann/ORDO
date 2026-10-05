@@ -1,11 +1,11 @@
-import fitz
+import pymupdf
 import pytest
 
 from app.api.v1 import menu as menu_routes
 
 
 def make_pdf(text: str) -> bytes:
-    document = fitz.open()
+    document = pymupdf.open()
     document.new_page().insert_text((50, 72), text, fontsize=11)
     return document.tobytes()
 

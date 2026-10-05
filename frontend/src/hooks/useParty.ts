@@ -5,7 +5,8 @@ import type { Party } from "@/types/api";
 
 export function useCreateParty() {
   return useMutation({
-    mutationFn: (name: string) => apiSend<Party>("POST", "/api/v1/parties", { name }),
+    mutationFn: (name: string) =>
+      apiSend<Party>("POST", "/api/v1/parties", { name }),
   });
 }
 

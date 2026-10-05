@@ -8,7 +8,7 @@ import re
 from dataclasses import dataclass
 from decimal import Decimal
 
-import fitz  # PyMuPDF
+import pymupdf
 
 MAX_PAGES = 20
 DEFAULT_CATEGORY = "Menu"
@@ -53,7 +53,7 @@ class ParsedItem:
 
 def extract_text(pdf_bytes: bytes) -> str:
     try:
-        document = fitz.open(stream=pdf_bytes, filetype="pdf")
+        document = pymupdf.open(stream=pdf_bytes, filetype="pdf")
     except Exception as error:
         raise MenuParseError("Unable to parse this PDF.") from error
 

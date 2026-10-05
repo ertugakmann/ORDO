@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-import fitz
+import pymupdf
 import pytest
 
 from app.parsers.menu_parser import MenuParseError, parse_menu_pdf, parse_menu_text
@@ -22,7 +22,7 @@ Coke €2,50
 
 
 def make_pdf(text: str) -> bytes:
-    document = fitz.open()
+    document = pymupdf.open()
     page = document.new_page()
     page.insert_text((50, 72), text, fontsize=11)
     return document.tobytes()
@@ -82,7 +82,7 @@ def test_invalid_pdf():
 
 
 def test_pdf_without_text():
-    document = fitz.open()
+    document = pymupdf.open()
     document.new_page()
     with pytest.raises(MenuParseError, match="no readable text"):
         parse_menu_pdf(document.tobytes())
